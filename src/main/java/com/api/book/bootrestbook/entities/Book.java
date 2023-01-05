@@ -30,7 +30,7 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor(String string) {
+    public String getAuthor() {
         return author;
     }
 
@@ -63,6 +63,7 @@ public class Book {
     public String toString() {
         return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
     }
+    
  
     
 }
