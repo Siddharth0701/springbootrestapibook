@@ -38,31 +38,54 @@ public class BookController {
 
     // get book by id
     @GetMapping("/books/{id}")
-    public Book getBook(@PathVariable("id") int id) {
-        return this.bookService.getBookById(id);
+    public ResponseEntity<Book> getBook(@PathVariable("id") int id) {
+        Book book= this.bookService.getBookById(id);
+        if(book==null){
+         return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();   
+        }
+         return ResponseEntity.of(Optional.of(book));
     }
 
     // add book by post method
     @PostMapping("/books")
-    public Book addBook(@RequestBody Book book) {
-        Book b = this.bookService.addBook(book);
-        System.out.println(book);
-        return b;
-
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+        Book b=null; 
+        try {
+            b = this.bookService.addBook(book);
+            System.out.println(book);
+            return ResponseEntity.of(Optional.of(b));
+           // return ResponseEntity.status(HttpStatus.CREATED).build();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // delete book handeler
     @DeleteMapping("/books/{bookId}")
-    public void deleteBook(@PathVariable("bookId") int bookId) {
-        this.bookService.deleteBook(bookId);
+    public ResponseEntity<Void> deleteBook(@PathVariable("bookId") int bookId) {
+        try {
+            this.bookService.deleteBook(bookId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+      
 
     }
 
     // update book handler
     @PutMapping("/books/{bookId}")
-    public Book updateBook(@RequestBody Book book, @PathVariable("bookId") int bookId) {
-        this.bookService.updateBook(book, bookId);
-        return book;
-
+    public ResponseEntity<Book> updateBook(@RequestBody Book book, @PathVariable("bookId") int bookId) {
+        try {
+            this.bookService.updateBook(book, bookId);
+            return ResponseEntity.ok().body(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+           
+        }  
     }
 }
