@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,20 @@ public class BookController {
     @GetMapping("/books")
     public ResponseEntity<List<Book>> getBooks() {
         // return this.bookService.getAllBooks();
-        List<Book> list = this.bookService.getAllBooks();
-        if (list.size() <= 0) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        try {
+            List<Book> list = this.bookService.getAllBooks();
+            if (list.size() <= 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+    
+           // return ResponseEntity.of(Optional.of(list));
+           return ResponseEntity.status(HttpStatus.CREATED).body(list);
+    
+        } catch (Exception e) {
+           e.printStackTrace();
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        return ResponseEntity.of(Optional.of(list));
-
+       
     }
 
     // get book by id
@@ -44,6 +52,7 @@ public class BookController {
          return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();   
         }
          return ResponseEntity.of(Optional.of(book));
+         
     }
 
     // add book by post method
@@ -53,8 +62,8 @@ public class BookController {
         try {
             b = this.bookService.addBook(book);
             System.out.println(book);
-            return ResponseEntity.of(Optional.of(b));
-           // return ResponseEntity.status(HttpStatus.CREATED).build();
+            //return ResponseEntity.of(Optional.of(b));
+           return ResponseEntity.status(HttpStatus.CREATED).build();
             
         } catch (Exception e) {
             e.printStackTrace();
